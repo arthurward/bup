@@ -6,19 +6,24 @@ exec "$bup_python" "$0" ${1+"$@"}
 # end of bup preamble
 
 from sys import stderr
-import sys
+import sys, platform
 
 
-if sys.platform.startswith('cygwin'):
+if platform.system().startswith('CYGWIN'):
+    # As of Cygwin x86_64's python 2.7.10-1 package, ctypes.cdll.shell32.IsUserAndAdmin is not defined.
+    print >> stderr, "can't detect root status on Cygwin; assuming not root"
+    print 'none'
+elif platform.system().startswith('Windows'):
     if sys.getwindowsversion()[0] > 5:
-        # Sounds like the situation is much more complicated here
+        # Sounds like situation is much more complicated here
         print >> stderr, "can't detect root status for OS version > 5; assuming not root"
         print 'none'
-    import ctypes
-    if ctypes.cdll.shell32.IsUserAnAdmin():
-        print 'root'
     else:
-        print 'none'
+        import ctypes
+        if ctypes.cdll.shell32.IsUserAnAdmin():
+            print 'root'
+        else:
+            print 'none'
 else:
     import os
     if os.environ.get('FAKEROOTKEY'):

@@ -5,7 +5,7 @@ from ctypes import sizeof, c_void_p
 from os import environ
 from contextlib import contextmanager
 import sys, os, pwd, subprocess, errno, socket, select, mmap, stat, re, struct
-import hashlib, heapq, math, operator, time, grp, tempfile
+import hashlib, heapq, math, operator, time, grp, tempfile, platform
 
 from bup import _helpers
 
@@ -324,10 +324,16 @@ def detect_fakeroot():
 
 _warned_about_superuser_detection = None
 def is_superuser():
-    if sys.platform.startswith('cygwin'):
+    global _warned_about_superuser_detection
+    if platform.system().startswith('CYGWIN'):
+        # As of Cygwin x86_64's python 2.7.10-1 package, ctypes.cdll.shell32.IsUserAndAdmin is not defined.
+        if not _warned_about_superuser_detection:
+            log("can't detect root status on Cygwin; assuming not root")
+            _warned_about_superuser_detection = True
+        return False
+    elif platform.system().startswith('Windows'):
         if sys.getwindowsversion()[0] > 5:
             # Sounds like situation is much more complicated here
-            global _warned_about_superuser_detection
             if not _warned_about_superuser_detection:
                 log("can't detect root status for OS version > 5; assuming not root")
                 _warned_about_superuser_detection = True
