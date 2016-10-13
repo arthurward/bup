@@ -131,6 +131,8 @@ d--------- ?/? 0 1970-01-01 00:00 .commit/
 d--------- ?/? 0 1970-01-01 00:00 .tag/
 d--------- ?/? 0 1970-01-01 00:00 src/"
 
+socket_mode="$(WVPASS ls -l src/socket | cut -b -10)" || exit $?
+
 symlink_mode="$(WVPASS ls -l src/symlink | cut -b -10)" || exit $?
 
 symlink_bup_info="$(WVPASS bup ls -l src/latest"$tmpdir"/src | grep symlink)" \
@@ -159,7 +161,7 @@ WVPASSEQ "$(bup ls -l src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
 "-rwx------ $user/$group 0 1969-07-20 20:18 executable
 prw------- $user/$group 0 1969-07-20 20:18 fifo
 -rw------- $user/$group 1024 1969-07-20 20:18 file
-srwx------ $user/$group 0 1969-07-20 20:18 socket
+$socket_mode $user/$group 0 1969-07-20 20:18 socket
 $symlink_mode $user/$group $symlink_size $symlink_date symlink -> file"
 
 WVPASSEQ "$(bup ls -la src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
@@ -169,7 +171,7 @@ drwx------ $user/$group 0 1969-07-20 20:18 ..
 -rwx------ $user/$group 0 1969-07-20 20:18 executable
 prw------- $user/$group 0 1969-07-20 20:18 fifo
 -rw------- $user/$group 1024 1969-07-20 20:18 file
-srwx------ $user/$group 0 1969-07-20 20:18 socket
+$socket_mode $user/$group 0 1969-07-20 20:18 socket
 $symlink_mode $user/$group $symlink_size $symlink_date symlink -> file"
 
 WVPASSEQ "$(bup ls -lA src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
@@ -177,28 +179,28 @@ WVPASSEQ "$(bup ls -lA src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
 -rwx------ $user/$group 0 1969-07-20 20:18 executable
 prw------- $user/$group 0 1969-07-20 20:18 fifo
 -rw------- $user/$group 1024 1969-07-20 20:18 file
-srwx------ $user/$group 0 1969-07-20 20:18 socket
+$socket_mode $user/$group 0 1969-07-20 20:18 socket
 $symlink_mode $user/$group $symlink_size $symlink_date symlink -> file"
 
 WVPASSEQ "$(bup ls -lF src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
 "-rwx------ $user/$group 0 1969-07-20 20:18 executable*
 prw------- $user/$group 0 1969-07-20 20:18 fifo|
 -rw------- $user/$group 1024 1969-07-20 20:18 file
-srwx------ $user/$group 0 1969-07-20 20:18 socket=
+$socket_mode $user/$group 0 1969-07-20 20:18 socket=
 $symlink_mode $user/$group $symlink_size $symlink_date symlink@ -> file"
 
 WVPASSEQ "$(bup ls -l --file-type src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
 "-rwx------ $user/$group 0 1969-07-20 20:18 executable
 prw------- $user/$group 0 1969-07-20 20:18 fifo|
 -rw------- $user/$group 1024 1969-07-20 20:18 file
-srwx------ $user/$group 0 1969-07-20 20:18 socket=
+$socket_mode $user/$group 0 1969-07-20 20:18 socket=
 $symlink_mode $user/$group $symlink_size $symlink_date symlink@ -> file"
 
 WVPASSEQ "$(bup ls -ln src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
 "-rwx------ $uid/$gid 0 1969-07-20 20:18 executable
 prw------- $uid/$gid 0 1969-07-20 20:18 fifo
 -rw------- $uid/$gid 1024 1969-07-20 20:18 file
-srwx------ $uid/$gid 0 1969-07-20 20:18 socket
+$socket_mode $uid/$gid 0 1969-07-20 20:18 socket
 $symlink_mode $uid/$gid $symlink_size $symlink_date symlink -> file"
 
 WVPASSEQ "$(bup ls -ld "src/latest$tmpdir/src" | tr -s ' ' ' ')" \
@@ -220,7 +222,7 @@ WVPASSEQ "$(bup ls -ln src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
 "-rwx------ $uid/$gid 0 1969-07-20 15:18 executable
 prw------- $uid/$gid 0 1969-07-20 15:18 fifo
 -rw------- $uid/$gid 1024 1969-07-20 15:18 file
-srwx------ $uid/$gid 0 1969-07-20 15:18 socket
+$socket_mode $uid/$gid 0 1969-07-20 15:18 socket
 $symlink_mode $uid/$gid $symlink_size $symlink_date_central symlink -> file"
 unset TZ
 
